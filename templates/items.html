@@ -1,0 +1,76 @@
+<!-- templates/items.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>All Items - Lost & Found</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+  <header class="bg-blue-600 text-white p-4 text-center text-2xl font-bold shadow">
+    All Lost & Found Items
+  </header>
+
+  <main class="p-6 max-w-5xl mx-auto">
+    <a href="/" class="text-blue-600 hover:underline mb-4 inline-block">← Back to Home</a>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {% for item in items %}
+        <div class="bg-white p-4 rounded shadow">
+          {% if item[4] %}
+            <img src="{{ url_for('static', filename='uploads/' + item[4]) }}" class="w-full h-40 object-cover rounded mb-3">
+          {% else %}
+            <img src="https://via.placeholder.com/300x200?text=No+Image" class="w-full h-40 object-cover rounded mb-3">
+          {% endif %}
+          <p><strong>Description:</strong> {{ item[2] }}</p>
+          <p><strong>Status:</strong> {{ item[3] }}</p>
+          <p><strong>Uploaded by:</strong> {{ item[1] }} ({{ item[5] }})</p>
+          <button
+            onclick="openClaimModal('{{ item[0] }}')"
+            class="mt-3 bg-green-600 text-white px-4 py-1 rounded hover:bg-green-700"
+          >
+            Claim
+          </button>
+        </div>
+      {% endfor %}
+    </div>
+  </main>
+
+  <!-- Claim Modal -->
+  <div id="claimModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center hidden">
+    <div class="bg-white p-6 rounded-lg w-80 space-y-4 relative">
+      <button
+        class="absolute top-2 right-3 text-gray-500 text-lg"
+        onclick="closeClaimModal()"
+      >&times;</button>
+      <h3 class="text-lg font-semibold">Claim This Item</h3>
+      <form method="POST" action="/claim">
+        <input type="hidden" name="item_id" id="modalItemId" />
+        <div>
+          <label class="block text-sm">Your Name</label>
+          <input name="claimant_name" type="text" class="w-full p-2 border rounded" required />
+        </div>
+        <div>
+          <label class="block text-sm">Your URN</label>
+          <input name="claimant_urn" type="text" class="w-full p-2 border rounded" required />
+        </div>
+        <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
+          Submit Claim
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function openClaimModal(itemId) {
+      document.getElementById("modalItemId").value = itemId;
+      document.getElementById("claimModal").classList.remove("hidden");
+    }
+
+    function closeClaimModal() {
+      document.getElementById("claimModal").classList.add("hidden");
+    }
+  </script>
+
+</body>
+</html>
